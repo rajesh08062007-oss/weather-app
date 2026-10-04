@@ -1,0 +1,1145 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Animated Smart Weather App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    padding:20px;
+    color:white;
+    background:linear-gradient(135deg,#0ea5e9,#2563eb,#7c3aed);
+    background-size:300% 300%;
+    animation:backgroundMove 10s ease infinite;
+}
+
+@keyframes backgroundMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.container{
+    width:100%;
+    max-width:650px;
+    margin:auto;
+    padding:25px;
+    border-radius:28px;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(18px);
+    box-shadow:0 15px 50px rgba(0,0,0,.35);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    margin:7px 0;
+    border:0;
+    border-radius:13px;
+    font-size:16px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    min-height:48px;
+    padding:13px;
+    margin:7px 0;
+    border:0;
+    border-radius:13px;
+    background:white;
+    color:#1769aa;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-2px) scale(1.01);
+    background:#e8f7ff;
+}
+
+.message{
+    text-align:center;
+    min-height:25px;
+    margin:15px 0;
+    font-weight:bold;
+}
+
+/* ==========================
+   WEATHER CHECK ANIMATION
+========================== */
+
+.loader{
+    display:none;
+    text-align:center;
+    margin:20px 0;
+}
+
+.weather-loader{
+    width:90px;
+    height:55px;
+    margin:auto;
+    position:relative;
+}
+
+.cloud{
+    position:absolute;
+    width:60px;
+    height:28px;
+    background:white;
+    border-radius:30px;
+    left:15px;
+    top:20px;
+    animation:cloudFloat 1.5s ease-in-out infinite;
+}
+
+.cloud:before{
+    content:"";
+    position:absolute;
+    width:28px;
+    height:28px;
+    background:white;
+    border-radius:50%;
+    left:10px;
+    top:-14px;
+}
+
+.cloud:after{
+    content:"";
+    position:absolute;
+    width:35px;
+    height:35px;
+    background:white;
+    border-radius:50%;
+    right:7px;
+    top:-18px;
+}
+
+@keyframes cloudFloat{
+    0%,100%{transform:translateX(-5px)}
+    50%{transform:translateX(8px)}
+}
+
+.rain{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:4px;
+}
+
+.drop{
+    width:4px;
+    height:13px;
+    background:#60a5fa;
+    border-radius:5px;
+    animation:rainDrop .7s infinite;
+}
+
+.drop:nth-child(2){
+    animation-delay:.15s;
+}
+
+.drop:nth-child(3){
+    animation-delay:.3s;
+}
+
+@keyframes rainDrop{
+    0%{
+        transform:translateY(-3px);
+        opacity:0;
+    }
+    50%{
+        opacity:1;
+    }
+    100%{
+        transform:translateY(10px);
+        opacity:0;
+    }
+}
+
+/* ==========================
+   WEATHER RESULT
+========================== */
+
+.weather{
+    display:none;
+    margin-top:20px;
+    text-align:center;
+    animation:weatherAppear .8s ease;
+}
+
+@keyframes weatherAppear{
+    from{
+        opacity:0;
+        transform:translateY(35px) scale(.96);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+.weather-icon{
+    font-size:75px;
+    display:inline-block;
+    animation:weatherIcon 2s ease-in-out infinite;
+}
+
+@keyframes weatherIcon{
+    0%,100%{
+        transform:translateY(0) rotate(-3deg);
+    }
+    50%{
+        transform:translateY(-10px) rotate(3deg);
+    }
+}
+
+.temperature{
+    font-size:58px;
+    font-weight:bold;
+    animation:numberAppear .8s ease;
+}
+
+@keyframes numberAppear{
+    from{
+        opacity:0;
+        transform:scale(.5);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.description{
+    font-size:20px;
+    margin:10px 0 20px;
+    text-transform:capitalize;
+}
+
+.details{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.card{
+    padding:18px 8px;
+    border-radius:18px;
+    background:rgba(255,255,255,.15);
+    animation:cardAppear .7s ease both;
+}
+
+.card:nth-child(1){animation-delay:.1s}
+.card:nth-child(2){animation-delay:.2s}
+.card:nth-child(3){animation-delay:.3s}
+.card:nth-child(4){animation-delay:.4s}
+.card:nth-child(5){animation-delay:.5s}
+.card:nth-child(6){animation-delay:.6s}
+
+@keyframes cardAppear{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.emoji{
+    font-size:30px;
+}
+
+.card h3{
+    margin:5px 0;
+}
+
+.coordinates{
+    margin-top:15px;
+    line-height:1.8;
+}
+
+/* ==========================
+   MAP
+========================== */
+
+.map{
+    margin-top:25px;
+}
+
+.map iframe{
+    width:100%;
+    height:280px;
+    border:0;
+    border-radius:17px;
+}
+
+/* ==========================
+   LINKS
+========================== */
+
+.links{
+    margin-top:25px;
+}
+
+.links h2,
+.spotify h2{
+    text-align:center;
+    margin-bottom:12px;
+}
+
+/* ==========================
+   SPOTIFY
+========================== */
+
+.spotify{
+    margin-top:30px;
+    text-align:center;
+}
+
+.spotify iframe{
+    width:100%;
+    height:352px;
+    border:0;
+    border-radius:15px;
+    margin-top:10px;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:450px){
+
+    body{
+        padding:10px;
+    }
+
+    .container{
+        padding:18px;
+    }
+
+    .temperature{
+        font-size:48px;
+    }
+
+    .weather-icon{
+        font-size:65px;
+    }
+
+    .details{
+        gap:8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌤️ Animated Weather App</h1>
+
+<input
+    type="tel"
+    id="mobile"
+    placeholder="📱 Enter Mobile Number"
+    maxlength="10"
+>
+
+<input
+    type="text"
+    id="city"
+    placeholder="📍 Enter City or Pincode"
+>
+
+<button onclick="searchWeather()">
+🔍 CHECK WEATHER
+</button>
+
+<button onclick="currentLocationWeather()">
+📡 USE MY CURRENT LOCATION
+</button>
+
+<div class="message" id="message"></div>
+
+
+<!-- ==========================
+     WEATHER LOADING ANIMATION
+========================== -->
+
+<div class="loader" id="loader">
+
+    <div class="weather-loader">
+
+        <div class="cloud"></div>
+
+        <div class="rain">
+            <span class="drop"></span>
+            <span class="drop"></span>
+            <span class="drop"></span>
+        </div>
+
+    </div>
+
+    <p>
+        🌦️ Checking weather...
+    </p>
+
+</div>
+
+
+<!-- ==========================
+     WEATHER RESULT
+========================== -->
+
+<div class="weather" id="weather">
+
+<h2 id="location">
+📍 Location
+</h2>
+
+<div class="weather-icon" id="weatherIcon">
+🌤️
+</div>
+
+<div class="temperature" id="temperature">
+--°C
+</div>
+
+<div class="description" id="description">
+--
+</div>
+
+
+<div class="details">
+
+<div class="card">
+<div class="emoji">💧</div>
+<h3>Humidity</h3>
+<p id="humidity">--%</p>
+</div>
+
+<div class="card">
+<div class="emoji">💨</div>
+<h3>Wind</h3>
+<p id="wind">-- km/h</p>
+</div>
+
+<div class="card">
+<div class="emoji">🌡️</div>
+<h3>Feels Like</h3>
+<p id="feels">--°C</p>
+</div>
+
+<div class="card">
+<div class="emoji">☁️</div>
+<h3>Clouds</h3>
+<p id="clouds">--%</p>
+</div>
+
+<div class="card">
+<div class="emoji">🔽</div>
+<h3>Pressure</h3>
+<p id="pressure">-- hPa</p>
+</div>
+
+<div class="card">
+<div class="emoji">🌧️</div>
+<h3>Rain</h3>
+<p id="rain">-- mm</p>
+</div>
+
+</div>
+
+
+<div class="coordinates">
+
+📍 Latitude:
+<span id="latitude">--</span>
+
+<br>
+
+📍 Longitude:
+<span id="longitude">--</span>
+
+</div>
+
+
+<!-- ==========================
+     GOOGLE MAP
+========================== -->
+
+<div class="map">
+
+<h2>🗺️ Google Maps</h2>
+
+<iframe
+    id="mapFrame"
+    loading="lazy">
+</iframe>
+
+</div>
+
+<button onclick="openGoogleMaps()">
+🗺️ OPEN GOOGLE MAPS
+</button>
+
+</div>
+
+
+<!-- ==========================
+     LINKS
+========================== -->
+
+<div class="links">
+
+<h2>🔗 Useful Links</h2>
+
+<button onclick="openGoogle()">
+🔎 Google
+</button>
+
+<button onclick="openYouTube()">
+▶️ YouTube
+</button>
+
+<button onclick="openMapsWebsite()">
+🗺️ Google Maps
+</button>
+
+<button onclick="openWeatherWebsite()">
+🌦️ Open-Meteo
+</button>
+
+</div>
+
+
+<!-- ==========================
+     SPOTIFY
+========================== -->
+
+<div class="spotify">
+
+<h2>🎵 Spotify Music</h2>
+
+<p style="margin-bottom:10px">
+Listen to Spotify while using the weather app.
+</p>
+
+<button onclick="openSpotify()">
+🎧 OPEN SPOTIFY
+</button>
+
+<iframe
+    src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    loading="lazy">
+</iframe>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   LOCATION VARIABLES
+========================================== */
+
+let currentLatitude = null;
+let currentLongitude = null;
+
+
+/* ==========================================
+   WEATHER CODE
+========================================== */
+
+function getWeatherInfo(code){
+
+    if(code === 0)
+        return ["☀️","Clear Sky"];
+
+    if(code === 1 || code === 2)
+        return ["🌤️","Partly Cloudy"];
+
+    if(code === 3)
+        return ["☁️","Cloudy"];
+
+    if(code === 45 || code === 48)
+        return ["🌫️","Fog"];
+
+    if(code >= 51 && code <= 57)
+        return ["🌦️","Drizzle"];
+
+    if(code >= 61 && code <= 67)
+        return ["🌧️","Rain"];
+
+    if(code >= 71 && code <= 77)
+        return ["❄️","Snow"];
+
+    if(code >= 80 && code <= 82)
+        return ["🌧️","Rain Showers"];
+
+    if(code >= 95)
+        return ["⛈️","Thunderstorm"];
+
+    return ["🌤️","Unknown Weather"];
+}
+
+
+/* ==========================================
+   SHOW LOADING ANIMATION
+========================================== */
+
+function startLoading(){
+
+    document.getElementById("loader")
+        .style.display = "block";
+
+    document.getElementById("weather")
+        .style.display = "none";
+
+    showMessage(
+        "🌦️ Checking weather..."
+    );
+}
+
+
+/* ==========================================
+   STOP LOADING ANIMATION
+========================================== */
+
+function stopLoading(){
+
+    document.getElementById("loader")
+        .style.display = "none";
+}
+
+
+/* ==========================================
+   CITY SEARCH
+========================================== */
+
+async function searchWeather(){
+
+    const city =
+        document.getElementById("city")
+        .value.trim();
+
+    const mobile =
+        document.getElementById("mobile")
+        .value.trim();
+
+
+    if(
+        mobile !== "" &&
+        !/^[0-9]{10}$/.test(mobile)
+    ){
+
+        showMessage(
+            "❌ Enter a valid 10 digit mobile number."
+        );
+
+        return;
+    }
+
+
+    if(city === ""){
+
+        showMessage(
+            "❌ Enter a city or pincode."
+        );
+
+        return;
+    }
+
+
+    startLoading();
+
+
+    try{
+
+        const url =
+        "https://geocoding-api.open-meteo.com/v1/search" +
+        "?name=" +
+        encodeURIComponent(city) +
+        "&count=1" +
+        "&language=en" +
+        "&format=json";
+
+
+        const response =
+            await fetch(url);
+
+
+        if(!response.ok)
+            throw new Error("Location error");
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !data.results ||
+            data.results.length === 0
+        ){
+
+            throw new Error(
+                "Location not found"
+            );
+
+        }
+
+
+        const place =
+            data.results[0];
+
+
+        await getWeather(
+
+            place.latitude,
+            place.longitude,
+            place.name
+
+        );
+
+    }
+
+    catch(error){
+
+        stopLoading();
+
+        showMessage(
+            "❌ Location not found. Try another city."
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   GPS WEATHER
+========================================== */
+
+function currentLocationWeather(){
+
+    if(!navigator.geolocation){
+
+        showMessage(
+            "❌ GPS is not supported."
+        );
+
+        return;
+    }
+
+
+    startLoading();
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position){
+
+            const lat =
+                position.coords.latitude;
+
+            const lon =
+                position.coords.longitude;
+
+
+            await getWeather(
+
+                lat,
+                lon,
+                "Your Current Location"
+
+            );
+
+        },
+
+        function(){
+
+            stopLoading();
+
+            showMessage(
+                "❌ Please allow location permission."
+            );
+
+        }
+
+    );
+
+}
+
+
+/* ==========================================
+   GET WEATHER
+========================================== */
+
+async function getWeather(
+    lat,
+    lon,
+    placeName
+){
+
+    try{
+
+        const url =
+        "https://api.open-meteo.com/v1/forecast" +
+
+        "?latitude=" + lat +
+
+        "&longitude=" + lon +
+
+        "&current=" +
+
+        "temperature_2m," +
+        "relative_humidity_2m," +
+        "apparent_temperature," +
+        "precipitation," +
+        "weather_code," +
+        "cloud_cover," +
+        "pressure_msl," +
+        "wind_speed_10m" +
+
+        "&timezone=auto";
+
+
+        const response =
+            await fetch(url);
+
+
+        if(!response.ok)
+            throw new Error("Weather error");
+
+
+        const data =
+            await response.json();
+
+
+        /*
+           Small delay makes the
+           checking animation visible.
+        */
+
+        setTimeout(
+
+            function(){
+
+                displayWeather(
+                    data,
+                    lat,
+                    lon,
+                    placeName
+                );
+
+                stopLoading();
+
+                showMessage(
+                    "✅ Weather updated successfully!"
+                );
+
+            },
+
+            900
+
+        );
+
+    }
+
+    catch(error){
+
+        stopLoading();
+
+        showMessage(
+            "❌ Weather service unavailable."
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   DISPLAY WEATHER
+========================================== */
+
+function displayWeather(
+    data,
+    lat,
+    lon,
+    placeName
+){
+
+    const weather =
+        data.current;
+
+
+    currentLatitude = lat;
+
+    currentLongitude = lon;
+
+
+    const info =
+        getWeatherInfo(
+            weather.weather_code
+        );
+
+
+    document.getElementById(
+        "weather"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "location"
+    ).innerText =
+        "📍 " + placeName;
+
+
+    document.getElementById(
+        "weatherIcon"
+    ).innerText =
+        info[0];
+
+
+    document.getElementById(
+        "temperature"
+    ).innerText =
+        Math.round(
+            weather.temperature_2m
+        ) + "°C";
+
+
+    document.getElementById(
+        "description"
+    ).innerText =
+        info[1];
+
+
+    document.getElementById(
+        "humidity"
+    ).innerText =
+        weather.relative_humidity_2m
+        + "%";
+
+
+    document.getElementById(
+        "wind"
+    ).innerText =
+        weather.wind_speed_10m
+        + " km/h";
+
+
+    document.getElementById(
+        "feels"
+    ).innerText =
+        Math.round(
+            weather.apparent_temperature
+        ) + "°C";
+
+
+    document.getElementById(
+        "clouds"
+    ).innerText =
+        weather.cloud_cover
+        + "%";
+
+
+    document.getElementById(
+        "pressure"
+    ).innerText =
+        Math.round(
+            weather.pressure_msl
+        ) + " hPa";
+
+
+    document.getElementById(
+        "rain"
+    ).innerText =
+        weather.precipitation
+        + " mm";
+
+
+    document.getElementById(
+        "latitude"
+    ).innerText =
+        Number(lat).toFixed(5);
+
+
+    document.getElementById(
+        "longitude"
+    ).innerText =
+        Number(lon).toFixed(5);
+
+
+    /*
+       GOOGLE MAP
+    */
+
+    document.getElementById(
+        "mapFrame"
+    ).src =
+
+        "https://www.google.com/maps?q=" +
+        lat +
+        "," +
+        lon +
+        "&output=embed";
+
+}
+
+
+/* ==========================================
+   GOOGLE MAPS
+========================================== */
+
+function openGoogleMaps(){
+
+    if(
+        currentLatitude !== null &&
+        currentLongitude !== null
+    ){
+
+        window.open(
+
+            "https://www.google.com/maps/search/" +
+            "?api=1&query=" +
+            currentLatitude +
+            "," +
+            currentLongitude,
+
+            "_blank"
+
+        );
+
+    }
+
+    else{
+
+        const city =
+            document.getElementById(
+                "city"
+            ).value.trim();
+
+
+        if(city === ""){
+
+            alert(
+                "Search a location first."
+            );
+
+            return;
+        }
+
+
+        window.open(
+
+            "https://www.google.com/maps/search/" +
+            "?api=1&query=" +
+            encodeURIComponent(city),
+
+            "_blank"
+
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   LINKS
+========================================== */
+
+function openGoogle(){
+
+    window.open(
+        "https://www.google.com",
+        "_blank"
+    );
+
+}
+
+
+function openYouTube(){
+
+    window.open(
+        "https://www.youtube.com",
+        "_blank"
+    );
+
+}
+
+
+function openMapsWebsite(){
+
+    window.open(
+        "https://maps.google.com",
+        "_blank"
+    );
+
+}
+
+
+function openWeatherWebsite(){
+
+    window.open(
+        "https://open-meteo.com/",
+        "_blank"
+    );
+
+}
+
+
+function openSpotify(){
+
+    window.open(
+        "https://open.spotify.com/",
+        "_blank"
+    );
+
+}
+
+
+/* ==========================================
+   MESSAGE
+========================================== */
+
+function showMessage(text){
+
+    document.getElementById(
+        "message"
+    ).innerText = text;
+
+}
+
+</script>
+
+</body>
+</html>
+```
